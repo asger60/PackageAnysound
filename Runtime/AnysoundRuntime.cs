@@ -122,7 +122,16 @@ public class AnysoundRuntime : MonoBehaviour
     public static void SetParameter(AnysoundObject soundObject, GameObject parentObject, float value) =>
         Instance.DoSetParameter(soundObject, parentObject, value);
 
-    
+
+    public static void SetPreviewParameter(float value)
+    {
+        print("set preview parameter " + value);
+        foreach (var tracker in Instance.GetTrackers(Instance.gameObject))
+        {
+            tracker.SetParameter(value);
+        }
+    }
+
     void DoSetParameter(AnysoundObject soundObject, GameObject parentObject, float value)
     {
         var trackers = GetTrackers(soundObject, parentObject);
@@ -178,6 +187,18 @@ public class AnysoundRuntime : MonoBehaviour
         }
 
         return furthestTracker;
+    }
+
+
+    AnysoundObjectTracker[] GetTrackers(GameObject parentObject)
+    {
+        List<AnysoundObjectTracker> trackers = new List<AnysoundObjectTracker>();
+        foreach (var tracker in _trackers)
+        {
+            if (tracker.Parent == parentObject) trackers.Add(tracker);
+        }
+
+        return trackers.ToArray();
     }
 
     AnysoundObjectTracker[] GetTrackers(AnysoundObject soundObject, GameObject parentObject)

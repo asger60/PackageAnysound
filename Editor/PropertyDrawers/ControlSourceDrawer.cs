@@ -28,7 +28,7 @@ namespace Editor.PropertyDrawers
             container.Add(controlExternalElement);
 
 
-            var controlRandomAmount = property.FindPropertyRelative("randomControlAmount");
+            var controlRandomAmount = property.FindPropertyRelative("randomControlWidth");
             PropertyField controlRandomAmountField = new PropertyField(controlRandomAmount);
             controlRandomElement.Add(controlRandomAmountField);
 
@@ -37,9 +37,15 @@ namespace Editor.PropertyDrawers
             controlRandomElement.Add(controlRandomShiftField);
             
             
-            var controlExternalAmount = property.FindPropertyRelative("externalControlAmount");
-            PropertyField controlExternalAmountField = new PropertyField(controlExternalAmount);
-            controlExternalElement.Add(controlExternalAmountField);
+
+            
+            var controlExternalMin = property.FindPropertyRelative("valueMin");
+            PropertyField controlExternalMinField = new PropertyField(controlExternalMin);
+            controlExternalElement.Add(controlExternalMinField);
+            
+            var controlExternalMax = property.FindPropertyRelative("valueMax");
+            PropertyField controlExternalMaxField = new PropertyField(controlExternalMax);
+            controlExternalElement.Add(controlExternalMaxField);
             
             controlRandomElement.style.display = new StyleEnum<DisplayStyle>(controlType.enumValueIndex == 0 ? DisplayStyle.Flex : DisplayStyle.None);
             controlExternalElement.style.display = new StyleEnum<DisplayStyle>(controlType.enumValueIndex == 1 ? DisplayStyle.Flex : DisplayStyle.None);

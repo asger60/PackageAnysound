@@ -157,7 +157,7 @@ public class AnysoundObjectTracker
     void HandleVolumeAndPitch()
     {
         if (_anysoundObject.ExternalPitchControl)
-            _source.pitch = _anysoundObject.GetPitch(_parameter);
+            _source.pitch = Mathf.Max(_anysoundObject.GetPitch(_parameter), 0.1f);
 
         if (_anysoundObject.ExternalVolumeControl)
             _source.volume =  Mathf.Pow(_anysoundObject.GetVolume(_parameter), 2);

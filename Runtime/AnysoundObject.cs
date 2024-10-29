@@ -54,21 +54,25 @@ public class AnysoundObject : ScriptableObject
         }
 
         [SerializeField] private ControlSourceTypes sourceType;
-        [FormerlySerializedAs("randomAmount")] [SerializeField] private float randomControlAmount;
-        [Range(-1, 1)] [SerializeField] private float randomShift;
-        [FormerlySerializedAs("externalAmount")] [Range(0, 1)] [SerializeField] private float externalControlAmount;
 
+        [SerializeField] private float randomControlWidth;
+
+        [Range(-1, 1)] [SerializeField] private float randomShift;
+
+        [FormerlySerializedAs("externalControlMin")] [SerializeField] private float valueMin;
+        [FormerlySerializedAs("externalControlMax")] [SerializeField] private float valueMax;
 
         public float GetControlValue(float initialValue, float externalValue)
         {
             switch (sourceType)
             {
                 case ControlSourceTypes.InternalRandom:
-                    float rangeMin = (randomControlAmount * -1 + (randomControlAmount * randomShift));
-                    float rangeMax = randomControlAmount + (randomControlAmount * randomShift);
+                    float width = randomControlWidth * 0.5f;
+                    float rangeMin = (width * -1 + (width * randomShift));
+                    float rangeMax = width + (width * randomShift);
                     return initialValue + Random.Range(rangeMin, rangeMax);
                 case ControlSourceTypes.ExternalParameter:
-                    return initialValue + (externalValue * externalControlAmount);
+                    return initialValue + Mathf.Lerp(valueMin, valueMax, externalValue);
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -140,7 +144,8 @@ public class AnysoundObject : ScriptableObject
 
     public float GetVolume(float externalValue)
     {
-        return volume.GetValue(externalValue);
+        var val = volume.GetValue(externalValue);
+        return val;
     }
 
     public AudioClip GetAudioClip()

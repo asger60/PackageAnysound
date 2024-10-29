@@ -17,7 +17,7 @@ namespace Editor
             var foldOut = new Foldout
             {
                 value = AnysoundRuntime.ShowExtendedSettings,
-                text = "Show settings"
+                text = "Settings"
             };
             root.Add(foldOut);
             _extendedInspector = new VisualElement();
@@ -30,6 +30,27 @@ namespace Editor
                 _extendedInspector.style.display = new StyleEnum<DisplayStyle>(foldOut.value ? DisplayStyle.Flex : DisplayStyle.None);
             });
             _anysoundObject = target as AnysoundObject;
+
+
+            var parameterSlider = new Slider("Test parameter", 0, 1f)
+            {
+                showInputField = true,
+                style =
+                {
+                    display = _anysoundObject.ExternalPitchControl || _anysoundObject.ExternalVolumeControl
+                        ? new StyleEnum<DisplayStyle>(DisplayStyle.Flex)
+                        : new StyleEnum<DisplayStyle>(DisplayStyle.None)
+                }
+            };
+            
+            parameterSlider.RegisterValueChangedCallback(evt =>
+            {
+                AnysoundRuntime.SetPreviewParameter(evt.newValue);
+            });
+
+
+            root.Add(parameterSlider);
+
 
             _previewButton = new Button(() =>
             {
