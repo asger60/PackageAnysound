@@ -1,8 +1,8 @@
 {
   "name": "com.floppyclub.anysound",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "displayName": "Anysound",
-  "description": "This is an example package",
+  "description": "Package for easy triggering sound in Unity",
   "unity": "2019.1",
   "unityRelease": "0b5",
   "documentationUrl": "https://example.com/",
@@ -14,8 +14,8 @@
     "keyword3"
   ],
   "author": {
-    "name": "Unity",
-    "email": "unity@example.com",
-    "url": "https://www.unity3d.com"
+    "name": "Floppy Club",
+    "email": "asger@floppy.club",
+    "url": "https://floppy.club"
   }
 }
