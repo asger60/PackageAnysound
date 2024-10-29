@@ -5,7 +5,7 @@ using UnityEngine.UIElements;
 
 namespace Editor.PropertyDrawers
 {
-    [CustomPropertyDrawer(typeof(AnysoundObject.FadeSettings))]
+    [CustomPropertyDrawer(typeof(Anysound.FadeSettings))]
     public class FadeSettingsDrawer : PropertyDrawer
     {
         private PropertyField _durationField;

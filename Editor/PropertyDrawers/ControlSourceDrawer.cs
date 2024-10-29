@@ -4,7 +4,7 @@ using UnityEngine.UIElements;
 
 namespace Editor.PropertyDrawers
 {
-    [CustomPropertyDrawer(typeof(AnysoundObject.ControlSource))]
+    [CustomPropertyDrawer(typeof(Anysound.ControlSource))]
     public class ControlSourceDrawer : PropertyDrawer
     {
         private PropertyField _durationField;

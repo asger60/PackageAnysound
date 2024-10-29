@@ -96,45 +96,44 @@ public class AnysoundRuntime : MonoBehaviour
     }
 
 
-    public static void StartPreview(AnysoundObject soundObject)
+    public static void StartPreview(Anysound sound)
     {
         if (!Instance._isInit) Instance.Init();
         if (!Application.isPlaying) Instance._executeInEditMode = true;
-        Instance.GetFreeTracker()?.Play(soundObject, Instance.gameObject);
+        Instance.GetFreeTracker()?.Play(sound, Instance.gameObject);
     }
 
-    public static void StopPreview(AnysoundObject soundObject, Action onStopped = null)
+    public static void StopPreview(Anysound sound, Action onStopped = null)
     {
         if (!Instance._isInit) Instance.Init();
         if (!Application.isPlaying) Instance._executeInEditMode = true;
-        foreach (var tracker in Instance.GetTrackers(soundObject, Instance.gameObject))
+        foreach (var tracker in Instance.GetTrackers(sound, Instance.gameObject))
         {
             tracker.Stop(onStopped);
         }
     }
 
-    public static void Play(AnysoundObject soundObject, GameObject gameObject) => Instance.DoPlay(soundObject, gameObject);
+    public static void Play(Anysound sound, GameObject gameObject) => Instance.DoPlay(sound, gameObject);
 
 
-    public static void Stop(AnysoundObject soundObject, GameObject gameObject) => Instance.DoStop(soundObject, gameObject);
+    public static void Stop(Anysound sound, GameObject gameObject) => Instance.DoStop(sound, gameObject);
 
 
-    public static void SetParameter(AnysoundObject soundObject, GameObject parentObject, float value) =>
-        Instance.DoSetParameter(soundObject, parentObject, value);
+    public static void SetParameter(Anysound sound, GameObject parentObject, float value) =>
+        Instance.DoSetParameter(sound, parentObject, value);
 
 
     public static void SetPreviewParameter(float value)
     {
-        print("set preview parameter " + value);
         foreach (var tracker in Instance.GetTrackers(Instance.gameObject))
         {
             tracker.SetParameter(value);
         }
     }
 
-    void DoSetParameter(AnysoundObject soundObject, GameObject parentObject, float value)
+    void DoSetParameter(Anysound sound, GameObject parentObject, float value)
     {
-        var trackers = GetTrackers(soundObject, parentObject);
+        var trackers = GetTrackers(sound, parentObject);
         foreach (var tracker in trackers)
         {
             tracker.SetParameter(value);
@@ -142,26 +141,26 @@ public class AnysoundRuntime : MonoBehaviour
     }
 
 
-    public static bool IsPreviewing(AnysoundObject soundObject)
+    public static bool IsPreviewing(Anysound sound)
     {
         if (!Instance._isInit) Instance.Init();
-        return Instance.GetTrackers(soundObject, Instance.gameObject).Length > 0;
+        return Instance.GetTrackers(sound, Instance.gameObject).Length > 0;
     }
 
 
-    void DoPlay(AnysoundObject soundObject, GameObject parentObject)
+    void DoPlay(Anysound sound, GameObject parentObject)
     {
         if (!_isInit) Init();
         if (parentObject == null)
             parentObject = gameObject;
-        GetFreeTracker()?.Play(soundObject, parentObject);
+        GetFreeTracker()?.Play(sound, parentObject);
     }
 
-    void DoStop(AnysoundObject soundObject, GameObject parentObject)
+    void DoStop(Anysound sound, GameObject parentObject)
     {
         if (!_isInit) Init();
 
-        foreach (var tracker in GetTrackers(soundObject, parentObject))
+        foreach (var tracker in GetTrackers(sound, parentObject))
         {
             tracker.Stop();
         }
@@ -201,12 +200,12 @@ public class AnysoundRuntime : MonoBehaviour
         return trackers.ToArray();
     }
 
-    AnysoundObjectTracker[] GetTrackers(AnysoundObject soundObject, GameObject parentObject)
+    AnysoundObjectTracker[] GetTrackers(Anysound sound, GameObject parentObject)
     {
         List<AnysoundObjectTracker> trackers = new List<AnysoundObjectTracker>();
         foreach (var tracker in _trackers)
         {
-            if (tracker.AnysoundObject == soundObject && tracker.Parent == parentObject) trackers.Add(tracker);
+            if (tracker.Anysound == sound && tracker.Parent == parentObject) trackers.Add(tracker);
         }
 
         return trackers.ToArray();

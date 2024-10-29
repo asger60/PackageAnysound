@@ -5,13 +5,13 @@ public class AnysoundObjectTracker
 {
     private GameObject _parent;
     private AudioSource _source;
-    private AnysoundObject _anysoundObject;
+    private Anysound _anysound;
 
     private bool _isFree;
     public bool IsFree => _isFree;
     public AudioSource Source => _source;
     public GameObject Parent => _parent;
-    public AnysoundObject AnysoundObject => _anysoundObject;
+    public Anysound Anysound => _anysound;
 
     private bool _isFadingVolume;
 
@@ -62,7 +62,7 @@ public class AnysoundObjectTracker
             return;
         }
 
-        if (_anysoundObject.Is2D)
+        if (_anysound.Is2D)
         {
             _source.panStereo = AnysoundRuntime.GetSound2DPan(_parent);
         }
@@ -89,26 +89,27 @@ public class AnysoundObjectTracker
         _source.transform.position = _parent.transform.position;
     }
 
-    public void Play(AnysoundObject soundObject, GameObject parentObject)
+    public void Play(Anysound sound, GameObject parentObject)
     {
-        _anysoundObject = soundObject;
+        _anysound = sound;
         _parent = parentObject;
         _isFree = false;
-        _source.clip = soundObject.GetAudioClip();
-        float volume = soundObject.GetVolume(_parameter);
+        _source.clip = sound.GetAudioClip();
+        float volume = sound.GetVolume(_parameter);
 
         _source.volume = volume;
-        _source.pitch = soundObject.GetPitch(_parameter);
-        _source.loop = soundObject.GetLooping();
-        var positionSettings = soundObject.GetSoundPositionSettings();
+        _source.pitch = sound.GetPitch(_parameter);
+        _source.loop = sound.GetLooping();
+        var positionSettings = sound.GetSoundPositionSettings();
         _source.spatialBlend = positionSettings.Spatialize ? 1 : 0;
         _source.spatialize = positionSettings.Spatialize;
+        _source.maxDistance = positionSettings.maxDistance;
         _source.panStereo = positionSettings.GetPan(parentObject);
         _source.Play();
 
-        if (_anysoundObject.GetPlaySettings().useFade)
+        if (_anysound.GetPlaySettings().useFade)
         {
-            _fade = new Fade(0, volume, _anysoundObject.GetPlaySettings().fadeDuration);
+            _fade = new Fade(0, volume, _anysound.GetPlaySettings().fadeDuration);
             _isFadingVolume = true;
         }
     }
@@ -125,7 +126,7 @@ public class AnysoundObjectTracker
 
     void DoStop()
     {
-        _anysoundObject = null;
+        _anysound = null;
         _parent = null;
         _source.Stop();
         _isFree = true;
@@ -135,13 +136,13 @@ public class AnysoundObjectTracker
     public void Stop(Action onStopped = null)
     {
         _onStopped = onStopped;
-        if (!_anysoundObject.GetStopSettings().useFade)
+        if (!_anysound.GetStopSettings().useFade)
         {
             DoStop();
         }
         else
         {
-            _fade = new Fade(_source.volume, 0, _anysoundObject.GetStopSettings().fadeDuration);
+            _fade = new Fade(_source.volume, 0, _anysound.GetStopSettings().fadeDuration);
             _isFadingVolume = true;
         }
     }
@@ -154,10 +155,10 @@ public class AnysoundObjectTracker
 
     void HandleVolumeAndPitch()
     {
-        if (_anysoundObject.ExternalPitchControl)
-            _source.pitch = Mathf.Max(_anysoundObject.GetPitch(_parameter), 0.1f);
+        if (_anysound.ExternalPitchControl)
+            _source.pitch = Mathf.Max(_anysound.GetPitch(_parameter), 0.1f);
 
-        if (_anysoundObject.ExternalVolumeControl)
-            _source.volume =  Mathf.Pow(_anysoundObject.GetVolume(_parameter), 2);
+        if (_anysound.ExternalVolumeControl)
+            _source.volume =  Mathf.Pow(_anysound.GetVolume(_parameter), 2);
     }
 }

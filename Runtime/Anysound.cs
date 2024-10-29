@@ -3,15 +3,15 @@ using UnityEngine;
 using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
-[CreateAssetMenu(fileName = "AnysoundObject", menuName = "Anysound/AnysoundObject", order = 1)]
-public class AnysoundObject : ScriptableObject
+[CreateAssetMenu(fileName = "Anysound", menuName = "Anysound/Anysound", order = 1)]
+public class Anysound : ScriptableObject
 {
     [SerializeField] private AudioClip[] audioClips;
 
     enum ClipSelectMode
     {
         Random,
-        Cycle
+        Sequential
     }
 
     [SerializeField] private ClipSelectMode clipSelectMode;
@@ -24,24 +24,38 @@ public class AnysoundObject : ScriptableObject
 
     [SerializeField] private PlayMode playMode;
 
-    public enum SoundPositionMode
+
+    [Serializable]
+    public struct SoundPositionMode
     {
-        WorldSpace,
-        ScreenSpace,
-        None
+        public enum SoundPositionType
+        {
+            WorldSpace,
+            ScreenSpace,
+            None
+        }
+
+        public SoundPositionType soundPositionType;
+        public float maxDistance;
+
+        public SoundPositionMode(SoundPositionType soundPositionMode, float maxDistance)
+        {
+            this.soundPositionType = soundPositionMode;
+            this.maxDistance = maxDistance;
+        }
     }
 
+
     [SerializeField] private SoundPositionMode soundPositionMode;
+
 
     [Serializable]
     public struct ControlledValue
     {
         [Range(0, 1f)] public float value;
         [SerializeField] private ControlSource control;
-
         public float GetValue(float externalValue) => control.GetControlValue(value, externalValue);
-
-        public bool IsExternallyControlled => control.SourceType == ControlSource.ControlSourceTypes.ExternalParameter;
+        public bool IsExternallyControlled => control.SourceType == ControlSource.ControlSourceTypes.GameParameter;
     }
 
     [Serializable]
@@ -49,8 +63,8 @@ public class AnysoundObject : ScriptableObject
     {
         public enum ControlSourceTypes
         {
-            InternalRandom,
-            ExternalParameter
+            Random,
+            GameParameter
         }
 
         [SerializeField] private ControlSourceTypes sourceType;
@@ -59,19 +73,22 @@ public class AnysoundObject : ScriptableObject
 
         [Range(-1, 1)] [SerializeField] private float randomShift;
 
-        [FormerlySerializedAs("externalControlMin")] [SerializeField] private float valueMin;
-        [FormerlySerializedAs("externalControlMax")] [SerializeField] private float valueMax;
+        [FormerlySerializedAs("externalControlMin")] [SerializeField]
+        private float valueMin;
+
+        [FormerlySerializedAs("externalControlMax")] [SerializeField]
+        private float valueMax;
 
         public float GetControlValue(float initialValue, float externalValue)
         {
             switch (sourceType)
             {
-                case ControlSourceTypes.InternalRandom:
+                case ControlSourceTypes.Random:
                     float width = randomControlWidth * 0.5f;
                     float rangeMin = (width * -1 + (width * randomShift));
                     float rangeMax = width + (width * randomShift);
                     return initialValue + Random.Range(rangeMin, rangeMax);
-                case ControlSourceTypes.ExternalParameter:
+                case ControlSourceTypes.GameParameter:
                     return initialValue + Mathf.Lerp(valueMin, valueMax, externalValue);
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -82,11 +99,7 @@ public class AnysoundObject : ScriptableObject
     }
 
 
-    //[SerializeField] private float volume = 1;
-    [FormerlySerializedAs("volumeValue")] [SerializeField]
-    private ControlledValue volume;
-
-
+    [SerializeField] private ControlledValue volume;
     [SerializeField] private ControlledValue pitch;
 
 
@@ -105,24 +118,26 @@ public class AnysoundObject : ScriptableObject
 
     public struct SoundPositionSettings
     {
-        private SoundPositionMode _positionMode;
+        private SoundPositionMode.SoundPositionType _positionMode;
         public readonly bool Spatialize;
+        public readonly float maxDistance;
 
         public SoundPositionSettings(SoundPositionMode positionMode) : this()
         {
-            _positionMode = positionMode;
-            Spatialize = positionMode == SoundPositionMode.WorldSpace;
+            maxDistance = positionMode.maxDistance;
+            _positionMode = positionMode.soundPositionType;
+            Spatialize = _positionMode == SoundPositionMode.SoundPositionType.WorldSpace;
         }
 
         public float GetPan(GameObject gameObject)
         {
             switch (_positionMode)
             {
-                case SoundPositionMode.WorldSpace:
+                case SoundPositionMode.SoundPositionType.WorldSpace:
                     return 0;
-                case SoundPositionMode.ScreenSpace:
+                case SoundPositionMode.SoundPositionType.ScreenSpace:
                     return AnysoundRuntime.GetSound2DPan(gameObject);
-                case SoundPositionMode.None:
+                case SoundPositionMode.SoundPositionType.None:
                     return 0;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -135,7 +150,7 @@ public class AnysoundObject : ScriptableObject
     public bool ExternalPitchControl => pitch.IsExternallyControlled;
     public bool ExternalVolumeControl => volume.IsExternallyControlled;
 
-    public bool Is2D => soundPositionMode == SoundPositionMode.ScreenSpace;
+    public bool Is2D => soundPositionMode.soundPositionType == SoundPositionMode.SoundPositionType.ScreenSpace;
 
     public float GetPitch(float externalValue)
     {
@@ -150,12 +165,14 @@ public class AnysoundObject : ScriptableObject
 
     public AudioClip GetAudioClip()
     {
+        if (audioClips == null || audioClips.Length == 0) return null;
+
         switch (clipSelectMode)
         {
             case ClipSelectMode.Random:
                 return audioClips[Random.Range(0, audioClips.Length)];
 
-            case ClipSelectMode.Cycle:
+            case ClipSelectMode.Sequential:
                 _currentPlayIndex++;
                 return audioClips[(int)Mathf.Repeat(_currentPlayIndex, audioClips.Length)];
 
@@ -176,4 +193,12 @@ public class AnysoundObject : ScriptableObject
 
     public FadeSettings GetStopSettings() => stopSettings;
     public FadeSettings GetPlaySettings() => playSettings;
+
+    public Anysound()
+    {
+        volume.value = 1;
+        pitch.value = 1;
+        soundPositionMode = new SoundPositionMode(SoundPositionMode.SoundPositionType.None, 100);
+        //todo add good defaults to everything...
+    }
 }

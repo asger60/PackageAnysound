@@ -4,11 +4,11 @@ using UnityEngine.UIElements;
 
 namespace Editor
 {
-    [CustomEditor(typeof(AnysoundObject))]
+    [CustomEditor(typeof(Anysound))]
     public class AnysoundObjectInspector : UnityEditor.Editor
     {
         private Button _previewButton;
-        private AnysoundObject _anysoundObject;
+        private Anysound _anysound;
         private VisualElement _extendedInspector;
 
         public override VisualElement CreateInspectorGUI()
@@ -29,7 +29,7 @@ namespace Editor
                 AnysoundRuntime.ShowExtendedSettings = foldOut.value;
                 _extendedInspector.style.display = new StyleEnum<DisplayStyle>(foldOut.value ? DisplayStyle.Flex : DisplayStyle.None);
             });
-            _anysoundObject = target as AnysoundObject;
+            _anysound = target as Anysound;
 
 
             var spacer = new VisualElement();
@@ -41,7 +41,7 @@ namespace Editor
                 showInputField = true,
                 style =
                 {
-                    display = _anysoundObject.ExternalPitchControl || _anysoundObject.ExternalVolumeControl
+                    display = _anysound.ExternalPitchControl || _anysound.ExternalVolumeControl
                         ? new StyleEnum<DisplayStyle>(DisplayStyle.Flex)
                         : new StyleEnum<DisplayStyle>(DisplayStyle.None)
                 }
@@ -58,22 +58,22 @@ namespace Editor
 
             _previewButton = new Button(() =>
             {
-                if (_anysoundObject.GetLooping())
+                if (_anysound.GetLooping())
                 {
-                    if (AnysoundRuntime.IsPreviewing(_anysoundObject))
+                    if (AnysoundRuntime.IsPreviewing(_anysound))
                     {
-                        AnysoundRuntime.StopPreview(_anysoundObject, () => { SetPreviewButtonText("Preview"); });
+                        AnysoundRuntime.StopPreview(_anysound, () => { SetPreviewButtonText("Preview"); });
                         SetPreviewButtonText("Stopping");
                     }
                     else
                     {
-                        AnysoundRuntime.StartPreview(_anysoundObject);
+                        AnysoundRuntime.StartPreview(_anysound);
                         SetPreviewButtonText("Stop");
                     }
                 }
                 else
                 {
-                    AnysoundRuntime.StartPreview(_anysoundObject);
+                    AnysoundRuntime.StartPreview(_anysound);
                     SetPreviewButtonText("Preview");
                 }
             });
