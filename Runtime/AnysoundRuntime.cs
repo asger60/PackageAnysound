@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.Plastic.Newtonsoft.Json;
 using UnityEditor;
 using UnityEngine;
 
@@ -28,6 +29,7 @@ public class AnysoundRuntime : MonoBehaviour
     private bool _isInit;
     private bool _executeInEditMode;
     private double _prevTime;
+    public static bool ShowExtendedSettings;
 
     public static float DeltaTime
     {
@@ -115,6 +117,20 @@ public class AnysoundRuntime : MonoBehaviour
 
 
     public static void Stop(AnysoundObject soundObject, GameObject gameObject) => Instance.DoStop(soundObject, gameObject);
+
+
+    public static void SetParameter(AnysoundObject soundObject, GameObject parentObject, float value) =>
+        Instance.DoSetParameter(soundObject, parentObject, value);
+
+    
+    void DoSetParameter(AnysoundObject soundObject, GameObject parentObject, float value)
+    {
+        var trackers = GetTrackers(soundObject, parentObject);
+        foreach (var tracker in trackers)
+        {
+            tracker.SetParameter(value);
+        }
+    }
 
 
     public static bool IsPreviewing(AnysoundObject soundObject)

@@ -9,11 +9,26 @@ namespace Editor
     {
         private Button _previewButton;
         private AnysoundObject _anysoundObject;
+        private VisualElement _extendedInspector;
 
         public override VisualElement CreateInspectorGUI()
         {
-            VisualElement defaultInspector = new VisualElement();
-            InspectorElement.FillDefaultInspector(defaultInspector, serializedObject, this);
+            VisualElement root = new VisualElement();
+            var foldOut = new Foldout
+            {
+                value = AnysoundRuntime.ShowExtendedSettings,
+                text = "Show settings"
+            };
+            root.Add(foldOut);
+            _extendedInspector = new VisualElement();
+            InspectorElement.FillDefaultInspector(_extendedInspector, serializedObject, this);
+            _extendedInspector.style.display = new StyleEnum<DisplayStyle>(foldOut.value ? DisplayStyle.Flex : DisplayStyle.None);
+            root.Add(_extendedInspector);
+            foldOut.RegisterValueChangedCallback(e =>
+            {
+                AnysoundRuntime.ShowExtendedSettings = foldOut.value;
+                _extendedInspector.style.display = new StyleEnum<DisplayStyle>(foldOut.value ? DisplayStyle.Flex : DisplayStyle.None);
+            });
             _anysoundObject = target as AnysoundObject;
 
             _previewButton = new Button(() =>
@@ -39,8 +54,8 @@ namespace Editor
             });
             SetPreviewButtonText("Preview");
 
-            defaultInspector.Add(_previewButton);
-            return defaultInspector;
+            root.Add(_previewButton);
+            return root;
         }
 
         void SetPreviewButtonText(string text)

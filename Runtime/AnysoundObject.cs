@@ -7,9 +7,6 @@ using Random = UnityEngine.Random;
 public class AnysoundObject : ScriptableObject
 {
     [SerializeField] private AudioClip[] audioClips;
-    [Range(0, 1f)] [SerializeField] private float volume = 1;
-    [Range(0, 10f)] [SerializeField] private float pitch = 1;
-
 
     enum ClipSelectMode
     {
@@ -18,7 +15,6 @@ public class AnysoundObject : ScriptableObject
     }
 
     [SerializeField] private ClipSelectMode clipSelectMode;
-    private int _currentPlayIndex;
 
     private enum PlayMode
     {
@@ -37,6 +33,61 @@ public class AnysoundObject : ScriptableObject
 
     [SerializeField] private SoundPositionMode soundPositionMode;
 
+    [Serializable]
+    public struct ControlledValue
+    {
+        [Range(0, 1f)] public float value;
+        [SerializeField] private ControlSource control;
+
+        public float GetValue(float externalValue) => control.GetControlValue(value, externalValue);
+
+        public bool IsExternallyControlled => control.SourceType == ControlSource.ControlSourceTypes.ExternalParameter;
+    }
+
+    [Serializable]
+    public struct ControlSource
+    {
+        public enum ControlSourceTypes
+        {
+            InternalRandom,
+            ExternalParameter
+        }
+
+        [SerializeField] private ControlSourceTypes sourceType;
+        [FormerlySerializedAs("randomAmount")] [SerializeField] private float randomControlAmount;
+        [Range(-1, 1)] [SerializeField] private float randomShift;
+        [FormerlySerializedAs("externalAmount")] [Range(0, 1)] [SerializeField] private float externalControlAmount;
+
+
+        public float GetControlValue(float initialValue, float externalValue)
+        {
+            switch (sourceType)
+            {
+                case ControlSourceTypes.InternalRandom:
+                    float rangeMin = (randomControlAmount * -1 + (randomControlAmount * randomShift));
+                    float rangeMax = randomControlAmount + (randomControlAmount * randomShift);
+                    return initialValue + Random.Range(rangeMin, rangeMax);
+                case ControlSourceTypes.ExternalParameter:
+                    return initialValue + (externalValue * externalControlAmount);
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        public ControlSourceTypes SourceType => sourceType;
+    }
+
+
+    //[SerializeField] private float volume = 1;
+    [FormerlySerializedAs("volumeValue")] [SerializeField]
+    private ControlledValue volume;
+
+
+    [SerializeField] private ControlledValue pitch;
+
+
+    private int _currentPlayIndex;
+
 
     public FadeSettings playSettings;
     public FadeSettings stopSettings;
@@ -44,19 +95,19 @@ public class AnysoundObject : ScriptableObject
     [Serializable]
     public struct FadeSettings
     {
-        [FormerlySerializedAs("fadeOutDuration")] public float fadeDuration;
-        public AnimationCurve fadeCurve;
+        public bool useFade;
+        public float fadeDuration;
     }
 
     public struct SoundPositionSettings
     {
         private SoundPositionMode _positionMode;
-        public bool spatialize;
+        public readonly bool Spatialize;
 
         public SoundPositionSettings(SoundPositionMode positionMode) : this()
         {
             _positionMode = positionMode;
-            spatialize = positionMode == SoundPositionMode.WorldSpace;
+            Spatialize = positionMode == SoundPositionMode.WorldSpace;
         }
 
         public float GetPan(GameObject gameObject)
@@ -77,16 +128,19 @@ public class AnysoundObject : ScriptableObject
         }
     }
 
+    public bool ExternalPitchControl => pitch.IsExternallyControlled;
+    public bool ExternalVolumeControl => volume.IsExternallyControlled;
+
     public bool Is2D => soundPositionMode == SoundPositionMode.ScreenSpace;
 
-    public float GetPitch()
+    public float GetPitch(float externalValue)
     {
-        return pitch;
+        return pitch.GetValue(externalValue);
     }
 
-    public float GetVolume()
+    public float GetVolume(float externalValue)
     {
-        return volume;
+        return volume.GetValue(externalValue);
     }
 
     public AudioClip GetAudioClip()
@@ -117,5 +171,4 @@ public class AnysoundObject : ScriptableObject
 
     public FadeSettings GetStopSettings() => stopSettings;
     public FadeSettings GetPlaySettings() => playSettings;
-    
 }
