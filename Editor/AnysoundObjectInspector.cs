@@ -32,6 +32,10 @@ namespace Editor
             _anysoundObject = target as AnysoundObject;
 
 
+            var spacer = new VisualElement();
+            spacer.style.height = new StyleLength(10);
+            root.Add(spacer);
+
             var parameterSlider = new Slider("Test parameter", 0, 1f)
             {
                 showInputField = true,
