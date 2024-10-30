@@ -164,7 +164,8 @@ public class AnysoundRuntime : MonoBehaviour
     void DoStop(Anysound sound, GameObject parentObject)
     {
         if (!_isInit) Init();
-
+        if (parentObject == null) return;
+        
         foreach (var tracker in GetTrackers(sound, parentObject))
         {
             tracker.Stop();
