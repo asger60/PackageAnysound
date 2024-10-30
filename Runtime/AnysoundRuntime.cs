@@ -30,6 +30,7 @@ public class AnysoundRuntime : MonoBehaviour
     private bool _executeInEditMode;
     private double _prevTime;
     public static bool ShowExtendedSettings;
+    public static AudioClip DebugClip;
 
     public static float DeltaTime
     {
@@ -52,7 +53,9 @@ public class AnysoundRuntime : MonoBehaviour
         _executeInEditMode = false;
     }
 
-    public void Init()
+    public static void Init() => Instance.DoInit();
+
+    void DoInit()
     {
         if (_isInit) return;
         foreach (var audioSource in GetComponentsInChildren<AudioSource>())
@@ -70,7 +73,9 @@ public class AnysoundRuntime : MonoBehaviour
             sourceObject.transform.SetParent(transform);
             _trackers.Add(new AnysoundObjectTracker(source));
         }
-
+#if UNITY_EDITOR
+        DebugClip = AssetDatabase.LoadAssetAtPath<AudioClip>("Packages/com.floppyclub.anysound/Runtime/Resources/DebugPling.wav");
+#endif
         _isInit = true;
     }
 
@@ -98,14 +103,14 @@ public class AnysoundRuntime : MonoBehaviour
 
     public static void StartPreview(Anysound sound)
     {
-        if (!Instance._isInit) Instance.Init();
+        if (!Instance._isInit) Init();
         if (!Application.isPlaying) Instance._executeInEditMode = true;
         Instance.GetFreeTracker()?.Play(sound, Instance.gameObject);
     }
 
     public static void StopPreview(Anysound sound, Action onStopped = null)
     {
-        if (!Instance._isInit) Instance.Init();
+        if (!Instance._isInit) Init();
         if (!Application.isPlaying) Instance._executeInEditMode = true;
         foreach (var tracker in Instance.GetTrackers(sound, Instance.gameObject))
         {
@@ -143,7 +148,7 @@ public class AnysoundRuntime : MonoBehaviour
 
     public static bool IsPreviewing(Anysound sound)
     {
-        if (!Instance._isInit) Instance.Init();
+        if (!Instance._isInit) Init();
         return Instance.GetTrackers(sound, Instance.gameObject).Length > 0;
     }
 

@@ -1,4 +1,5 @@
 using System;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
@@ -54,8 +55,23 @@ public class Anysound : ScriptableObject
     {
         [Range(0, 1f)] public float value;
         [SerializeField] private ControlSource control;
-        public float GetValue(float externalValue) => control.GetControlValue(value, externalValue);
+
+        public float GetValue(float externalValue)
+        {
+            if (controlActive)
+                return control.GetControlValue(value, externalValue);
+            return value;
+        }
+
         public bool IsExternallyControlled => control.SourceType == ControlSource.ControlSourceTypes.GameParameter;
+        [FormerlySerializedAs("_controlActive")] public bool controlActive;
+
+        public void Init(float initialValue)
+        {
+            value = initialValue;
+            control.Init();
+            controlActive = false;
+        }
     }
 
     [Serializable]
@@ -79,6 +95,7 @@ public class Anysound : ScriptableObject
         [FormerlySerializedAs("externalControlMax")] [SerializeField]
         private float valueMax;
 
+
         public float GetControlValue(float initialValue, float externalValue)
         {
             switch (sourceType)
@@ -96,6 +113,15 @@ public class Anysound : ScriptableObject
         }
 
         public ControlSourceTypes SourceType => sourceType;
+
+        public void Init()
+        {
+            sourceType = ControlSourceTypes.Random;
+            randomControlWidth = 0.25f;
+            randomShift = 0;
+            valueMin = 0;
+            valueMax = 1;
+        }
     }
 
 
@@ -199,6 +225,10 @@ public class Anysound : ScriptableObject
         volume.value = 1;
         pitch.value = 1;
         soundPositionMode = new SoundPositionMode(SoundPositionMode.SoundPositionType.None, 100);
+        audioClips = new AudioClip[1];
+        audioClips[0] = AnysoundRuntime.DebugClip;
+        pitch.Init(1);
+        volume.Init(0.8f);
         //todo add good defaults to everything...
     }
 }

@@ -18,25 +18,29 @@ namespace Editor.PropertyDrawers
             label.style.marginTop = 8;
             label.style.marginLeft = 3;
             container.Add(label);
-            
+
             PropertyField valueField = new PropertyField(property.FindPropertyRelative("value"));
             container.Add(valueField);
-            
             PropertyField controlField = new PropertyField(property.FindPropertyRelative("control"));
+            var controlActive = property.FindPropertyRelative("controlActive");
+            PropertyField controlLabel = new PropertyField(controlActive);
+            
+            
+            controlLabel.BindProperty(controlActive);
+            controlLabel.RegisterValueChangeCallback(evt =>
+            {
+                controlField.style.display = new StyleEnum<DisplayStyle>(controlActive.boolValue ? DisplayStyle.Flex : DisplayStyle.None);
+            });
+
+            container.Add(controlLabel);
+
+
+            controlField.style.display = new StyleEnum<DisplayStyle>(controlActive.boolValue ? DisplayStyle.Flex : DisplayStyle.None);
+
+
             container.Add(controlField);
-//
-            //_durationField = new PropertyField(property.FindPropertyRelative("fadeDuration"));
-            //container.Add(_durationField);
-            //boolField.RegisterValueChangeCallback(evt => { SetDurationVisible(evt.changedProperty.boolValue); });
-//
-            //SetDurationVisible((property.FindPropertyRelative("useFade").boolValue));
 
             return container;
-        }
-
-        void SetDurationVisible(bool state)
-        {
-            _durationField.style.display = new StyleEnum<DisplayStyle>(state ? DisplayStyle.Flex : DisplayStyle.None);
         }
     }
 }

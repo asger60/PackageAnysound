@@ -97,8 +97,15 @@ namespace Editor.PropertyDrawers
 
         void CreateNew()
         {
+            AnysoundRuntime.Init();
             Anysound newSound = ScriptableObject.CreateInstance<Anysound>();
-            AssetDatabase.CreateAsset(newSound, "Assets/NewSound.asset");
+            var uniqueFileName = AssetDatabase.GenerateUniqueAssetPath("Assets/NewSound.asset");
+            bool assetExists = AssetDatabase.GetMainAssetTypeAtPath(uniqueFileName) != null;
+            if (assetExists)
+            {
+                return;
+            }
+            AssetDatabase.CreateAsset(newSound, uniqueFileName);
             var assetInProject = AssetDatabase.LoadAssetAtPath<Anysound>(AssetDatabase.GetAssetPath(newSound));
             Debug.Log(assetInProject, assetInProject);
             //Selection.activeObject = assetInProject;
