@@ -23,15 +23,23 @@ namespace Editor.PropertyDrawers
             PropertyField typeField = new PropertyField(typeProperty);
             container.Add(typeField);
 
-            PropertyField distanceField = new PropertyField(property.FindPropertyRelative("maxDistance"));
-            distanceField.style.display = new StyleEnum<DisplayStyle>(typeProperty.enumValueIndex == 0 ? DisplayStyle.Flex : DisplayStyle.None);
-            container.Add(distanceField);
+            PropertyField distanceMaxField = new PropertyField(property.FindPropertyRelative("maxDistance"));
+            PropertyField distanceMinField = new PropertyField(property.FindPropertyRelative("minDistance"));
+
+            distanceMaxField.style.display = new StyleEnum<DisplayStyle>(typeProperty.enumValueIndex == 0 ? DisplayStyle.Flex : DisplayStyle.None);
+            distanceMinField.style.display = new StyleEnum<DisplayStyle>(typeProperty.enumValueIndex == 0 ? DisplayStyle.Flex : DisplayStyle.None);
+
+            container.Add(distanceMinField);
+            container.Add(distanceMaxField);
+            
 
 
             typeField.RegisterValueChangeCallback(evt =>
             {
-                distanceField.style.display = new StyleEnum<DisplayStyle>(typeProperty.enumValueIndex == 0 ? DisplayStyle.Flex : DisplayStyle.None);
-
+                distanceMaxField.style.display =
+                    new StyleEnum<DisplayStyle>(typeProperty.enumValueIndex == 0 ? DisplayStyle.Flex : DisplayStyle.None);
+                distanceMinField.style.display =
+                    new StyleEnum<DisplayStyle>(typeProperty.enumValueIndex == 0 ? DisplayStyle.Flex : DisplayStyle.None);
             });
 
             return container;

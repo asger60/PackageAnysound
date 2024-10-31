@@ -38,11 +38,13 @@ public class Anysound : ScriptableObject
 
         public SoundPositionType soundPositionType;
         public float maxDistance;
+        public float minDistance;
 
         public SoundPositionMode(SoundPositionType soundPositionMode, float maxDistance)
         {
             this.soundPositionType = soundPositionMode;
             this.maxDistance = maxDistance;
+            this.minDistance = 10;
         }
     }
 
@@ -139,18 +141,22 @@ public class Anysound : ScriptableObject
     public struct FadeSettings
     {
         public bool useFade;
-        public float fadeDuration;
+        public float fadeDuration ;
+        
     }
 
     public struct SoundPositionSettings
     {
         private SoundPositionMode.SoundPositionType _positionMode;
         public readonly bool Spatialize;
-        public readonly float maxDistance;
+        public readonly float MaxDistance;
+        public readonly float MinDistance;
+        
 
         public SoundPositionSettings(SoundPositionMode positionMode) : this()
         {
-            maxDistance = positionMode.maxDistance;
+            MaxDistance = positionMode.maxDistance;
+            MinDistance = positionMode.minDistance;
             _positionMode = positionMode.soundPositionType;
             Spatialize = _positionMode == SoundPositionMode.SoundPositionType.WorldSpace;
         }
@@ -173,8 +179,8 @@ public class Anysound : ScriptableObject
         }
     }
 
-    public bool ExternalPitchControl => pitch.IsExternallyControlled;
-    public bool ExternalVolumeControl => volume.IsExternallyControlled;
+    public bool ExternalPitchControl => pitch.controlActive && pitch.IsExternallyControlled;
+    public bool ExternalVolumeControl => volume.controlActive &&  volume.IsExternallyControlled;
 
     public bool Is2D => soundPositionMode.soundPositionType == SoundPositionMode.SoundPositionType.ScreenSpace;
 
@@ -229,6 +235,7 @@ public class Anysound : ScriptableObject
         audioClips[0] = AnysoundRuntime.DebugClip;
         pitch.Init(1);
         volume.Init(0.8f);
-        //todo add good defaults to everything...
+        playSettings.fadeDuration = 0.2f;
+        stopSettings.fadeDuration = 0.2f;
     }
 }

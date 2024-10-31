@@ -103,8 +103,8 @@ public class AnysoundObjectTracker
         var positionSettings = sound.GetSoundPositionSettings();
         _source.spatialBlend = positionSettings.Spatialize ? 1 : 0;
         _source.spatialize = positionSettings.Spatialize;
-        _source.minDistance = 2;
-        _source.maxDistance = positionSettings.maxDistance;
+        _source.minDistance = positionSettings.MinDistance ;
+        _source.maxDistance = positionSettings.MaxDistance;
         _source.panStereo = positionSettings.GetPan(parentObject);
         _source.Play();
 

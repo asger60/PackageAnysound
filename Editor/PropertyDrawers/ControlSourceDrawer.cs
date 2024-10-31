@@ -23,6 +23,8 @@ namespace Editor.PropertyDrawers
             container.Add(controlElement);
 
             var controlType = property.FindPropertyRelative("sourceType");
+            
+            
             PropertyField controlTypeField = new PropertyField(controlType);
             controlElement.Add(controlTypeField);
 

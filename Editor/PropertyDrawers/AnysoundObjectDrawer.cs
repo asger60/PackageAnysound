@@ -99,7 +99,7 @@ namespace Editor.PropertyDrawers
         {
             AnysoundRuntime.Init();
             Anysound newSound = ScriptableObject.CreateInstance<Anysound>();
-            var uniqueFileName = AssetDatabase.GenerateUniqueAssetPath("Assets/NewSound.asset");
+            var uniqueFileName = AssetDatabase.GenerateUniqueAssetPath("Assets/"+_property.displayName+".asset");
             bool assetExists = AssetDatabase.GetMainAssetTypeAtPath(uniqueFileName) != null;
             if (assetExists)
             {

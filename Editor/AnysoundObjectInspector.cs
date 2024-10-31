@@ -1,5 +1,6 @@
 using UnityEditor;
 using UnityEditor.UIElements;
+using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace Editor
@@ -10,9 +11,12 @@ namespace Editor
         private Button _previewButton;
         private Anysound _anysound;
         private VisualElement _extendedInspector;
+        private Slider _parameterSlider;
+
 
         public override VisualElement CreateInspectorGUI()
         {
+            EditorGUI.BeginChangeCheck();
             VisualElement root = new VisualElement();
             var foldOut = new Foldout
             {
@@ -23,7 +27,9 @@ namespace Editor
             _extendedInspector = new VisualElement();
             InspectorElement.FillDefaultInspector(_extendedInspector, serializedObject, this);
             _extendedInspector.style.display = new StyleEnum<DisplayStyle>(foldOut.value ? DisplayStyle.Flex : DisplayStyle.None);
+
             root.Add(_extendedInspector);
+
             foldOut.RegisterValueChangedCallback(e =>
             {
                 AnysoundRuntime.ShowExtendedSettings = foldOut.value;
@@ -36,25 +42,21 @@ namespace Editor
             spacer.style.height = new StyleLength(10);
             root.Add(spacer);
 
-            var parameterSlider = new Slider("Test parameter", 0, 1f)
+            _parameterSlider = new Slider("Test parameter", 0, 1f)
             {
                 showInputField = true,
-                style =
-                {
-                    display = _anysound.ExternalPitchControl || _anysound.ExternalVolumeControl
-                        ? new StyleEnum<DisplayStyle>(DisplayStyle.Flex)
-                        : new StyleEnum<DisplayStyle>(DisplayStyle.None)
-                }
             };
-            
-            parameterSlider.RegisterValueChangedCallback(evt =>
+            RefreshParameterActive();
+            _parameterSlider.RegisterValueChangedCallback(evt => { AnysoundRuntime.SetPreviewParameter(evt.newValue); });
+
+
+            root.TrackSerializedObjectValue(serializedObject, property =>
             {
-                AnysoundRuntime.SetPreviewParameter(evt.newValue);
+                RefreshParameterActive();
             });
 
 
-            root.Add(parameterSlider);
-
+            root.Add(_parameterSlider);
 
             _previewButton = new Button(() =>
             {
@@ -80,7 +82,15 @@ namespace Editor
             SetPreviewButtonText("Preview");
 
             root.Add(_previewButton);
+
             return root;
+        }
+
+        void RefreshParameterActive()
+        {
+            _parameterSlider.style.display = _anysound.ExternalPitchControl || _anysound.ExternalVolumeControl
+                ? new StyleEnum<DisplayStyle>(DisplayStyle.Flex)
+                : new StyleEnum<DisplayStyle>(DisplayStyle.None);
         }
 
         void SetPreviewButtonText(string text)
