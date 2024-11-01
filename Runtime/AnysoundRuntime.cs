@@ -118,14 +118,13 @@ public class AnysoundRuntime : MonoBehaviour
         }
     }
 
-    public static void Play(Anysound sound, GameObject gameObject) => Instance.DoPlay(sound, gameObject);
+    public static void Play(Anysound sound, GameObject gameObject) => Instance?.DoPlay(sound, gameObject);
 
 
-    public static void Stop(Anysound sound, GameObject gameObject) => Instance.DoStop(sound, gameObject);
+    public static void Stop(Anysound sound, GameObject gameObject) => Instance?.DoStop(sound, gameObject);
 
 
-    public static void SetParameter(Anysound sound, GameObject parentObject, float value) =>
-        Instance.DoSetParameter(sound, parentObject, value);
+    public static void SetParameter(Anysound sound, GameObject parentObject, float value) => Instance?.DoSetParameter(sound, parentObject, value);
 
 
     public static void SetPreviewParameter(float value)
@@ -165,7 +164,7 @@ public class AnysoundRuntime : MonoBehaviour
     {
         if (!_isInit) Init();
         if (parentObject == null) return;
-        
+
         foreach (var tracker in GetTrackers(sound, parentObject))
         {
             tracker.Stop();
