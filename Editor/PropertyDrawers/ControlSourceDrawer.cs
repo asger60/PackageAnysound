@@ -2,7 +2,7 @@ using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine.UIElements;
 
-namespace Editor.PropertyDrawers
+namespace PropertyDrawers
 {
     [CustomPropertyDrawer(typeof(Anysound.ControlSource))]
     public class ControlSourceDrawer : PropertyDrawer

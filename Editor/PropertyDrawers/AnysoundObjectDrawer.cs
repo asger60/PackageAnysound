@@ -3,8 +3,7 @@ using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace Editor.PropertyDrawers
-{
+
     [CustomPropertyDrawer(typeof(Anysound))]
     public class AnysoundObjectDrawer : PropertyDrawer
     {
@@ -124,4 +123,3 @@ namespace Editor.PropertyDrawers
             _previewButton.text = text;
         }
     }
-}

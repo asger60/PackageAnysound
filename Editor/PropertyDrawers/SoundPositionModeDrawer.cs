@@ -3,7 +3,7 @@ using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace Editor.PropertyDrawers
+namespace PropertyDrawers
 {
     [CustomPropertyDrawer(typeof(Anysound.SoundPositionMode))]
     public class SoundPositionModeDrawer : PropertyDrawer
