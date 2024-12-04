@@ -39,8 +39,11 @@ public class AnysoundRuntime : MonoBehaviour
             {
                 return Time.deltaTime;
             }
-
+#if UNITY_EDITOR
             return (float)(EditorApplication.timeSinceStartup - Instance._prevTime);
+#else
+            return 0;
+#endif
         }
     }
 
