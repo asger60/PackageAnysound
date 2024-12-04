@@ -226,8 +226,9 @@ public class AnysoundRuntime : MonoBehaviour
             if (tracker.IsFree) continue;
             tracker.Update();
         }
-
+#if UNITY_EDITOR
         _prevTime = EditorApplication.timeSinceStartup;
+#endif
     }
 
     public static float GetSound2DPan(GameObject gameObject)
