@@ -1,4 +1,3 @@
-#if UNITY_EDITOR
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine.UIElements;
@@ -96,4 +95,3 @@ public class AnysoundObjectInspector : UnityEditor.Editor
         _previewButton.text = text;
     }
 }
-#endif
