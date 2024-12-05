@@ -1,10 +1,9 @@
-using com.floppyclub.anysound.Runtime;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine.UIElements;
 
 [CustomEditor(typeof(Anysound))]
-public class AnysoundObjectInspector : UnityEditor.Editor
+public class AnysoundObjectInspector : Editor
 {
     private Button _previewButton;
     private Anysound _anysound;

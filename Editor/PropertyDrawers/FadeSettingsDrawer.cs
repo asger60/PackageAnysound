@@ -1,37 +1,33 @@
-using com.floppyclub.anysound.Runtime;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine.UIElements;
 
-namespace com.floppyclub.anysound.Editor.PropertyDrawers
+[CustomPropertyDrawer(typeof(Anysound.FadeSettings))]
+public class FadeSettingsDrawer : PropertyDrawer
 {
-    [CustomPropertyDrawer(typeof(Anysound.FadeSettings))]
-    public class FadeSettingsDrawer : PropertyDrawer
+    private PropertyField _durationField;
+
+    public override VisualElement CreatePropertyGUI(SerializedProperty property)
     {
-        private PropertyField _durationField;
+        VisualElement container = new VisualElement();
+        var label = new Label(property.displayName);
+        label.style.marginTop = 8;
+        label.style.marginLeft = 3;
+        container.Add(label);
+        PropertyField boolField = new PropertyField(property.FindPropertyRelative("useFade"));
+        container.Add(boolField);
 
-        public override VisualElement CreatePropertyGUI(SerializedProperty property)
-        {
-            VisualElement container = new VisualElement();
-            var label = new Label(property.displayName);
-            label.style.marginTop = 8;
-            label.style.marginLeft = 3;
-            container.Add(label);
-            PropertyField boolField = new PropertyField(property.FindPropertyRelative("useFade"));
-            container.Add(boolField);
+        _durationField = new PropertyField(property.FindPropertyRelative("fadeDuration"));
+        container.Add(_durationField);
+        boolField.RegisterValueChangeCallback(evt => { SetDurationVisible(evt.changedProperty.boolValue); });
 
-            _durationField = new PropertyField(property.FindPropertyRelative("fadeDuration"));
-            container.Add(_durationField);
-            boolField.RegisterValueChangeCallback(evt => { SetDurationVisible(evt.changedProperty.boolValue); });
+        SetDurationVisible((property.FindPropertyRelative("useFade").boolValue));
 
-            SetDurationVisible((property.FindPropertyRelative("useFade").boolValue));
+        return container;
+    }
 
-            return container;
-        }
-
-        void SetDurationVisible(bool state)
-        {
-            _durationField.style.display = new StyleEnum<DisplayStyle>(state ? DisplayStyle.Flex : DisplayStyle.None);
-        }
+    void SetDurationVisible(bool state)
+    {
+        _durationField.style.display = new StyleEnum<DisplayStyle>(state ? DisplayStyle.Flex : DisplayStyle.None);
     }
 }
