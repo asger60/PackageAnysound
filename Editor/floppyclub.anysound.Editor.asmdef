@@ -1,0 +1,16 @@
+{
+    "name": "floppyclub.anysound.Editor",
+    "rootNamespace": "",
+    "references": ["floppyclub.anysound"],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

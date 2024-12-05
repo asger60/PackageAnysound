@@ -1,8 +1,9 @@
+using com.floppyclub.anysound.Runtime;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine.UIElements;
 
-namespace PropertyDrawers
+namespace com.floppyclub.anysound.Editor.PropertyDrawers
 {
     [CustomPropertyDrawer(typeof(Anysound.FadeSettings))]
     public class FadeSettingsDrawer : PropertyDrawer
