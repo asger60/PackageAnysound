@@ -97,8 +97,7 @@ public class AnysoundRuntime : MonoBehaviour
     static void EditorUpdate()
     {
         if (Application.isPlaying) return;
-
-        //if (Instance._executeInEditMode)
+        if (Instance != null)
         {
             Instance.Update();
         }
