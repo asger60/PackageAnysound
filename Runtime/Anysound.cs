@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
@@ -6,6 +7,8 @@ using Random = UnityEngine.Random;
 [CreateAssetMenu(fileName = "Anysound", menuName = "Anysound/Anysound", order = 1)]
 public class Anysound : ScriptableObject
 {
+    [field: SerializeField] public List<string>  tags { get; private set; }
+    
     [SerializeField] private AudioClip[] audioClips;
 
     enum ClipSelectMode
@@ -65,7 +68,7 @@ public class Anysound : ScriptableObject
         }
 
         public bool IsExternallyControlled => control.SourceType == ControlSource.ControlSourceTypes.GameParameter;
-        [FormerlySerializedAs("_controlActive")] public bool controlActive;
+        public bool controlActive;
 
         public void Init(float initialValue)
         {
@@ -105,6 +108,7 @@ public class Anysound : ScriptableObject
                     float width = randomControlWidth * 0.5f;
                     float rangeMin = (width * -1 + (width * randomShift));
                     float rangeMax = width + (width * randomShift);
+                    Debug.Log(initialValue);
                     return initialValue + Random.Range(rangeMin, rangeMax);
                 case ControlSourceTypes.GameParameter:
                     return initialValue + Mathf.Lerp(valueMin, valueMax, externalValue);
@@ -133,8 +137,8 @@ public class Anysound : ScriptableObject
     private int _currentPlayIndex;
 
 
-    public FadeSettings playSettings;
-    public FadeSettings stopSettings;
+    [SerializeField] FadeSettings playSettings;
+    [SerializeField] FadeSettings stopSettings;
 
     [Serializable]
     public struct FadeSettings
@@ -236,4 +240,6 @@ public class Anysound : ScriptableObject
         playSettings.fadeDuration = 0.2f;
         stopSettings.fadeDuration = 0.2f;
     }
+
+
 }
