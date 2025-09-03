@@ -2,131 +2,124 @@ using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
-using FloppyClub.Anysound;
 
-// Define a namespace for your editor scripts
-namespace FloppyClub.Anysound.Editor
-{
-    [CustomPropertyDrawer(typeof(global::Anysound))]
-    public class AnysoundObjectDrawer : PropertyDrawer
-    {
-        private Button _previewButton, _createButton;
-        private PropertyField _propertyField;
-        private SerializedProperty _property;
+//CustomPropertyDrawer(typeof(Anysound))]
+//ublic class AnysoundObjectDrawer : PropertyDrawer
+//
+//   private Button _previewButton, _createButton;
+//   private PropertyField _propertyField;
+//   private SerializedProperty _property;
 
-        public override VisualElement CreatePropertyGUI(SerializedProperty property)
-        {
-            _property = property;
-            Debug.Log(
-                $"Creating property GUI for {property.name}, property type: {property.type}, boxed value: {(property.boxedValue != null ? "not null" : "null")}");
+//   public override VisualElement CreatePropertyGUI(SerializedProperty property)
+//   {
+//       _property = property;
+//       Debug.Log($"Creating property GUI for {property.name}, property type: {property.type}, boxed value: {(property.boxedValue != null ? "not null" : "null")}");
 
-            VisualElement root = new VisualElement
-            {
-                style =
-                {
-                    flexGrow = 1
-                }
-            };
+//       VisualElement root = new VisualElement
+//       {
+//           style =
+//           {
+//               flexGrow = 1
+//           }
+//       };
 
-            VisualElement container = new VisualElement
-            {
-                style =
-                {
-                    flexGrow = 1,
-                    flexDirection = FlexDirection.Row
-                }
-            };
+//       VisualElement container = new VisualElement
+//       {
+//           style =
+//           {
+//               flexGrow = 1,
+//               flexDirection = FlexDirection.Row
+//           }
+//       };
 
 
-            _propertyField = new PropertyField(property)
-            {
-                style =
-                {
-                    flexGrow = 1
-                }
-            };
-            container.Add(_propertyField);
-            _propertyField.BindProperty(property);
-            _propertyField.RegisterValueChangeCallback(evt => { RefreshButtonStates(property.boxedValue != null); });
+//       _propertyField = new PropertyField(property)
+//       {
+//           style =
+//           {
+//               flexGrow = 1
+//           }
+//       };
+//       container.Add(_propertyField);
+//       _propertyField.BindProperty(property);
+//       _propertyField.RegisterValueChangeCallback(evt => { RefreshButtonStates(property.boxedValue != null); });
 
 
-            _createButton = new Button
-            {
-                text = "Create",
-                style =
-                {
-                    width = 80,
-                }
-            };
-            _createButton.clicked += CreateNew;
-            container.Add(_createButton);
+//       _createButton = new Button
+//       {
+//           text = "Create",
+//           style =
+//           {
+//               width = 80,
+//           }
+//       };
+//       _createButton.clicked += CreateNew;
+//       container.Add(_createButton);
 
 
-            _previewButton = new Button
-            {
-                text = "Preview",
-                style =
-                {
-                    width = 80,
-                }
-            };
-            _previewButton.clicked += () =>
-            {
-                global::Anysound target = (global::Anysound)property.boxedValue;
-                if (target.GetLooping())
-                {
-                    if (AnysoundRuntime.IsPreviewing(target))
-                    {
-                        AnysoundRuntime.StopPreview(target, () => { SetPreviewButtonText("Preview"); });
-                        SetPreviewButtonText("Stopping");
-                    }
-                    else
-                    {
-                        AnysoundRuntime.StartPreview(target);
-                        SetPreviewButtonText("Stop");
-                    }
-                }
-                else
-                {
-                    AnysoundRuntime.StartPreview(target);
-                    SetPreviewButtonText("Preview");
-                }
-            };
-            RefreshButtonStates(property.boxedValue != null);
-            container.Add(_previewButton);
+//       _previewButton = new Button
+//       {
+//           text = "Preview",
+//           style =
+//           {
+//               width = 80,
+//           }
+//       };
+//       _previewButton.clicked += () =>
+//       {
+//           Anysound target = (Anysound)property.boxedValue;
+//           if (target.GetLooping())
+//           {
+//               if (AnysoundRuntime.IsPreviewing(target))
+//               {
+//                   AnysoundRuntime.StopPreview(target, () => { SetPreviewButtonText("Preview"); });
+//                   SetPreviewButtonText("Stopping");
+//               }
+//               else
+//               {
+//                   AnysoundRuntime.StartPreview(target);
+//                   SetPreviewButtonText("Stop");
+//               }
+//           }
+//           else
+//           {
+//               AnysoundRuntime.StartPreview(target);
+//               SetPreviewButtonText("Preview");
+//           }
+//       };
+//       RefreshButtonStates(property.boxedValue != null);
+//       container.Add(_previewButton);
 
 
-            root.Add(container);
-            return root;
-        }
+//       root.Add(container);
+//       return root;
+//   }
 
-        void CreateNew()
-        {
-            AnysoundRuntime.Init();
-            global::Anysound newSound = ScriptableObject.CreateInstance<global::Anysound>();
-            var uniqueFileName = AssetDatabase.GenerateUniqueAssetPath("Assets/" + _property.displayName + ".asset");
-            bool assetExists = AssetDatabase.GetMainAssetTypeAtPath(uniqueFileName) != null;
-            if (assetExists)
-            {
-                return;
-            }
+//   void CreateNew()
+//   {
+//       AnysoundRuntime.Init();
+//       Anysound newSound = ScriptableObject.CreateInstance<Anysound>();
+//       var uniqueFileName = AssetDatabase.GenerateUniqueAssetPath("Assets/"+_property.displayName+".asset");
+//       bool assetExists = AssetDatabase.GetMainAssetTypeAtPath(uniqueFileName) != null;
+//       if (assetExists)
+//       {
+//           return;
+//       }
+//       AssetDatabase.CreateAsset(newSound, uniqueFileName);
+//       var assetInProject = AssetDatabase.LoadAssetAtPath<Anysound>(AssetDatabase.GetAssetPath(newSound));
+//       Debug.Log(assetInProject, assetInProject);
+//       _property.objectReferenceValue = assetInProject;
+//       _property.serializedObject.ApplyModifiedProperties();
+//   }
 
-            AssetDatabase.CreateAsset(newSound, uniqueFileName);
-            var assetInProject = AssetDatabase.LoadAssetAtPath<global::Anysound>(AssetDatabase.GetAssetPath(newSound));
-            Debug.Log(assetInProject, assetInProject);
-            _property.objectReferenceValue = assetInProject;
-            _property.serializedObject.ApplyModifiedProperties();
-        }
+//   void RefreshButtonStates(bool hasValue)
+//   {
+//       _createButton.style.display = new StyleEnum<DisplayStyle>(hasValue ? DisplayStyle.None : DisplayStyle.Flex);
+//       _previewButton.style.display = new StyleEnum<DisplayStyle>(!hasValue ? DisplayStyle.None : DisplayStyle.Flex);
+//   }
 
-        void RefreshButtonStates(bool hasValue)
-        {
-            _createButton.style.display = new StyleEnum<DisplayStyle>(hasValue ? DisplayStyle.None : DisplayStyle.Flex);
-            _previewButton.style.display = new StyleEnum<DisplayStyle>(!hasValue ? DisplayStyle.None : DisplayStyle.Flex);
-        }
-
-        void SetPreviewButtonText(string text)
-        {
-            _previewButton.text = text;
-        }
-    }
-}
+//   void SetPreviewButtonText(string text)
+//   {
+//       _previewButton.text = text;
+//   }
+//
