@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-
 using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -17,8 +16,14 @@ public class AnysoundRuntime : MonoBehaviour
         {
             if (!_instance)
             {
+                _instance = FindAnyObjectByType<AnysoundRuntime>();
+            }
+
+            if (!_instance)
+            {
                 _instance = new GameObject("AnysoundRuntime").AddComponent<AnysoundRuntime>();
             }
+
 
             return _instance;
         }
@@ -53,7 +58,6 @@ public class AnysoundRuntime : MonoBehaviour
     {
         _isInit = false;
         Init();
-
     }
 
     public static void Init() => Instance.DoInit();
