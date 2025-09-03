@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
-using UnityEditor;
+
 using UnityEngine;
 #if UNITY_EDITOR
+using UnityEditor;
 #endif
 
 [ExecuteInEditMode]
@@ -16,7 +17,7 @@ public class AnysoundRuntime : MonoBehaviour
         {
             if (!_instance)
             {
-                _instance = FindObjectOfType<AnysoundRuntime>();
+                _instance = new GameObject("AnysoundRuntime").AddComponent<AnysoundRuntime>();
             }
 
             return _instance;
@@ -28,7 +29,6 @@ public class AnysoundRuntime : MonoBehaviour
     [Range(1, 200)] [SerializeField] private int voices = 100;
     private Camera _camera;
     private bool _isInit;
-    private bool _executeInEditMode;
     private double _prevTime;
     public static bool ShowExtendedSettings;
     public static AudioClip DebugClip;
@@ -54,7 +54,6 @@ public class AnysoundRuntime : MonoBehaviour
         _isInit = false;
         Init();
 
-        _executeInEditMode = false;
     }
 
     public static void Init() => Instance.DoInit();
@@ -107,14 +106,12 @@ public class AnysoundRuntime : MonoBehaviour
     public static void StartPreview(Anysound sound)
     {
         if (!Instance._isInit) Init();
-        if (!Application.isPlaying) Instance._executeInEditMode = true;
         Instance.GetFreeTracker()?.Play(sound, Instance.gameObject);
     }
 
     public static void StopPreview(Anysound sound, Action onStopped = null)
     {
         if (!Instance._isInit) Init();
-        if (!Application.isPlaying) Instance._executeInEditMode = true;
         foreach (var tracker in Instance.GetTrackers(sound, Instance.gameObject))
         {
             tracker.Stop(onStopped);

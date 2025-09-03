@@ -1,8 +1,8 @@
 {
   "name": "com.floppyclub.anysound",
-  "version": "0.0.44",
+  "version": "0.0.45",
   "displayName": "Anysound",
-  "description": "Package for easy triggering sound in Unity",
+  "description": "Package for easy triggering sounds in Unity",
   "unity": "2019.1",
   "unityRelease": "0b5",
   "documentationUrl": "https://example.com/",

@@ -13,6 +13,8 @@ public class AnysoundObjectDrawer : PropertyDrawer
     public override VisualElement CreatePropertyGUI(SerializedProperty property)
     {
         _property = property;
+        Debug.Log($"Creating property GUI for {property.name}, property type: {property.type}, boxed value: {(property.boxedValue != null ? "not null" : "null")}");
+
         VisualElement root = new VisualElement
         {
             style =
@@ -106,7 +108,6 @@ public class AnysoundObjectDrawer : PropertyDrawer
         AssetDatabase.CreateAsset(newSound, uniqueFileName);
         var assetInProject = AssetDatabase.LoadAssetAtPath<Anysound>(AssetDatabase.GetAssetPath(newSound));
         Debug.Log(assetInProject, assetInProject);
-        //Selection.activeObject = assetInProject;
         _property.objectReferenceValue = assetInProject;
         _property.serializedObject.ApplyModifiedProperties();
     }
