@@ -106,7 +106,6 @@ public class Anysound : ScriptableObject
                     float width = randomControlWidth * 0.5f;
                     float rangeMin = (width * -1 + (width * randomShift));
                     float rangeMax = width + (width * randomShift);
-                    Debug.Log(initialValue);
                     return initialValue + Random.Range(rangeMin, rangeMax);
                 case ControlSourceTypes.GameParameter:
                     return initialValue + Mathf.Lerp(valueMin, valueMax, externalValue);
