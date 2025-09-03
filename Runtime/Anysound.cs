@@ -7,8 +7,6 @@ using Random = UnityEngine.Random;
 [CreateAssetMenu(fileName = "Anysound", menuName = "Anysound/Anysound", order = 1)]
 public class Anysound : ScriptableObject
 {
-    [field: SerializeField] public List<string>  tags { get; private set; }
-    
     [SerializeField] private AudioClip[] audioClips;
 
     enum ClipSelectMode
