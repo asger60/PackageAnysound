@@ -158,16 +158,37 @@ public class AnysoundRuntime : MonoBehaviour
 
     void DoPlay(Anysound sound, GameObject parentObject)
     {
-        if (!_isInit) Init();
-        if (parentObject == null)
+        if (!parentObject)
+        {
+            Debug.LogWarning("#Anysound#Trying to play with no parent object.. Assigning default.");
             parentObject = gameObject;
+        }
+
+        if (!sound)
+        {
+            Debug.LogWarning("#Anysound#Trying to play null sound " + parentObject.transform.name, parentObject.transform);
+            return;
+        }
+
+        if (!_isInit) Init();
+
         GetFreeTracker()?.Play(sound, parentObject);
     }
 
     void DoStop(Anysound sound, GameObject parentObject)
     {
         if (!_isInit) Init();
-        if (parentObject == null) return;
+        if (!parentObject)
+        {
+            Debug.LogWarning("#Anysound#Trying to stop with no parent object..");
+            return;
+        }
+
+        if (!sound)
+        {
+            Debug.LogWarning("#Anysound#Trying to stop null sound " + parentObject.transform.name, parentObject.transform);
+            return;
+        }
 
         foreach (var tracker in GetTrackers(sound, parentObject))
         {

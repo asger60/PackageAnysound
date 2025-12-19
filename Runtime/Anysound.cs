@@ -91,11 +91,9 @@ public class Anysound : ScriptableObject
 
         [Range(-1, 1)] [SerializeField] private float randomShift;
 
-        [FormerlySerializedAs("externalControlMin")] [SerializeField]
-        private float valueMin;
+        [SerializeField] private float valueMin;
 
-        [FormerlySerializedAs("externalControlMax")] [SerializeField]
-        private float valueMax;
+        [SerializeField] private float valueMax;
 
 
         public float GetControlValue(float initialValue, float externalValue)
@@ -136,13 +134,14 @@ public class Anysound : ScriptableObject
 
     [SerializeField] FadeSettings playSettings;
     [SerializeField] FadeSettings stopSettings;
+    [Range(0, 5f)] [SerializeField] private float delay = 0;
+    public float Delay => delay;
 
     [Serializable]
     public struct FadeSettings
     {
         public bool useFade;
-        public float fadeDuration ;
-        
+        public float fadeDuration;
     }
 
     public struct SoundPositionSettings
@@ -151,7 +150,7 @@ public class Anysound : ScriptableObject
         public readonly bool Spatialize;
         public readonly float MaxDistance;
         public readonly float MinDistance;
-        
+
 
         public SoundPositionSettings(SoundPositionMode positionMode) : this()
         {
@@ -174,12 +173,11 @@ public class Anysound : ScriptableObject
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-
         }
     }
 
     public bool ExternalPitchControl => pitch.controlActive && pitch.IsExternallyControlled;
-    public bool ExternalVolumeControl => volume.controlActive &&  volume.IsExternallyControlled;
+    public bool ExternalVolumeControl => volume.controlActive && volume.IsExternallyControlled;
 
     public bool Is2D => soundPositionMode.soundPositionType == SoundPositionMode.SoundPositionType.ScreenSpace;
 
@@ -238,5 +236,6 @@ public class Anysound : ScriptableObject
         stopSettings.fadeDuration = 0.2f;
     }
 
-
+    public static void Play(Anysound sound, GameObject parentObject) => AnysoundRuntime.Play(sound, parentObject);
+    public static void Stop(Anysound sound, GameObject parentObject) => AnysoundRuntime.Stop(sound, parentObject);
 }

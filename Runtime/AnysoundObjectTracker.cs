@@ -16,6 +16,8 @@ public class AnysoundObjectTracker
     private bool _isFadingVolume;
 
     private Action _onStopped;
+    private float _timer;
+    private float _schedulePlayDelay;
 
 
     struct Fade
@@ -44,23 +46,43 @@ public class AnysoundObjectTracker
         _source.spread = 10;
         _source.dopplerLevel = 0;
         _isFree = true;
+        _timer = -1;
     }
 
     public void Update()
     {
         if (_isFree) return;
-        if (_parent == null)
+        if (!_parent)
         {
             _source.Stop();
             _isFree = true;
             return;
         }
 
-        if (!_source.isPlaying)
+        if (!_source.isPlaying && _timer < 0)
         {
             _isFree = true;
             return;
         }
+
+        if (_timer >= 0)
+        {
+            Debug.Log(_timer);
+            // Use a unified deltaTime that works both in Play Mode and in the Editor
+            _timer += AnysoundRuntime.DeltaTime;
+        }
+
+        if (_timer > _schedulePlayDelay)
+        {
+            _timer = -1;
+            _source.Play();
+            if (_anysound.GetPlaySettings().useFade)
+            {
+                _fade = new Fade(0, _anysound.GetVolume(_parameter), _anysound.GetPlaySettings().fadeDuration);
+                _isFadingVolume = true;
+            }
+        }
+
 
         if (_anysound.Is2D)
         {
@@ -68,7 +90,6 @@ public class AnysoundObjectTracker
         }
 
         HandleVolumeAndPitch();
-
 
         if (_isFadingVolume)
         {
@@ -103,23 +124,27 @@ public class AnysoundObjectTracker
         var positionSettings = sound.GetSoundPositionSettings();
         _source.spatialBlend = positionSettings.Spatialize ? 1 : 0;
         _source.spatialize = positionSettings.Spatialize;
-        _source.minDistance = positionSettings.MinDistance ;
+        _source.minDistance = positionSettings.MinDistance;
         _source.maxDistance = positionSettings.MaxDistance;
         _source.panStereo = positionSettings.GetPan(parentObject);
-        _source.Play();
-
-        if (_anysound.GetPlaySettings().useFade)
-        {
-            _fade = new Fade(0, volume, _anysound.GetPlaySettings().fadeDuration);
-            _isFadingVolume = true;
-        }
+        _timer = 0;
+        _schedulePlayDelay = sound.Delay;
+        //if (sound.Delay > 0)
+        //{
+        //    _source.PlayDelayed(sound.Delay);
+        //}
+        //else
+        //{
+        //    _source.Play();
+        //}
     }
 
     public float GetPlaybackPercent()
     {
         if (_isFree)
             return 100;
-        if (_source.clip == null)
+
+        if (!_source.clip)
             return 100;
 
         return (_source.time / _source.clip.length) * 100f;
@@ -132,6 +157,7 @@ public class AnysoundObjectTracker
         _source.Stop();
         _isFree = true;
         _onStopped?.Invoke();
+        _timer = -1;
     }
 
     public void Stop(Action onStopped = null)
@@ -160,6 +186,6 @@ public class AnysoundObjectTracker
             _source.pitch = Mathf.Max(_anysound.GetPitch(_parameter), 0.1f);
 
         if (_anysound.ExternalVolumeControl)
-            _source.volume =  Mathf.Pow(_anysound.GetVolume(_parameter), 2);
+            _source.volume = Mathf.Pow(_anysound.GetVolume(_parameter), 2);
     }
 }
