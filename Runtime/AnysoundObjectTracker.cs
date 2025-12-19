@@ -67,8 +67,6 @@ public class AnysoundObjectTracker
 
         if (_timer >= 0)
         {
-            Debug.Log(_timer);
-            // Use a unified deltaTime that works both in Play Mode and in the Editor
             _timer += AnysoundRuntime.DeltaTime;
         }
 
