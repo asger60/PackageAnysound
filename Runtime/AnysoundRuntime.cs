@@ -158,6 +158,7 @@ public class AnysoundRuntime : MonoBehaviour
 
     void DoPlay(Anysound sound, GameObject parentObject)
     {
+        Init();
         if (!parentObject)
         {
             Debug.LogWarning("#Anysound#Trying to play with no parent object.. Assigning default.");
