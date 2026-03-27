@@ -76,6 +76,7 @@ public class AnysoundObjectTracker
             _source.Play();
             if (_anysound.GetPlaySettings().useFade)
             {
+                _source.volume = _fade.initialValue;
                 _fade = new Fade(0, _anysound.GetVolume(_parameter), _anysound.GetPlaySettings().fadeDuration);
                 _isFadingVolume = true;
             }

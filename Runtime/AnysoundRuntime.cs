@@ -97,6 +97,9 @@ public class AnysoundRuntime : MonoBehaviour
         EditorApplication.update += EditorUpdate;
     }
 
+    public static Action<Anysound, GameObject> OnPlayEvent;
+    public static Action<Anysound, GameObject> OnStopEvent;
+
     static void EditorUpdate()
     {
         if (Application.isPlaying) return;
@@ -174,6 +177,9 @@ public class AnysoundRuntime : MonoBehaviour
         if (!_isInit) Init();
 
         GetFreeTracker()?.Play(sound, parentObject);
+#if UNITY_EDITOR
+        OnPlayEvent?.Invoke(sound, parentObject);
+#endif
     }
 
     void DoStop(Anysound sound, GameObject parentObject)
@@ -195,6 +201,9 @@ public class AnysoundRuntime : MonoBehaviour
         {
             tracker.Stop();
         }
+#if UNITY_EDITOR
+        OnStopEvent?.Invoke(sound, parentObject);
+#endif
     }
 
     AnysoundObjectTracker GetFreeTracker()
