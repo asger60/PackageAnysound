@@ -87,7 +87,10 @@ public class AnysoundObjectTracker
             _source.panStereo = AnysoundRuntime.GetSound2DPan(_parent);
         }
 
-        HandleVolumeAndPitch();
+        if (_anysound.ExternalPitchControl || _anysound.ExternalVolumeControl)
+        {
+            HandleVolumeAndPitch();
+        }
 
         if (_isFadingVolume)
         {
@@ -105,7 +108,10 @@ public class AnysoundObjectTracker
             }
         }
 
-        _source.transform.position = _parent.transform.position;
+        if (_source.spatialBlend > 0)
+        {
+            _source.transform.position = _parent.transform.position;
+        }
     }
 
     public void Play(Anysound sound, GameObject parentObject)

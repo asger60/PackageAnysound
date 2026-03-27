@@ -245,7 +245,7 @@ public class AnysoundRuntime : MonoBehaviour
 
     private void Update()
     {
-        foreach (var tracker in Instance._trackers)
+        foreach (var tracker in _trackers)
         {
             if (tracker.IsFree) continue;
             tracker.Update();
@@ -257,6 +257,7 @@ public class AnysoundRuntime : MonoBehaviour
 
     public static float GetSound2DPan(GameObject gameObject)
     {
+        if (Instance._camera == null) Instance._camera = Camera.main;
         var pos = Instance._camera.WorldToViewportPoint(gameObject.transform.position);
         pos.x -= 0.5f;
         pos.x *= 2;

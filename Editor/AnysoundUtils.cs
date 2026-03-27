@@ -1,0 +1,85 @@
+using UnityEditor;
+using UnityEngine;
+using System.IO;
+using System.Linq;
+
+public class AnysoundUtils
+{
+    [MenuItem("Assets/Create/Anysound from selected clips", false)]
+    public static void CreateAnysoundFromSelectedClips()
+    {
+        var selectedAudioClips = Selection.objects.OfType<AudioClip>().ToArray();
+        if (selectedAudioClips.Length == 0) return;
+
+        if (selectedAudioClips.Length > 1)
+        {
+            int option = EditorUtility.DisplayDialogComplex("Create Anysound",
+                $"You have selected {selectedAudioClips.Length} audio clips. How would you like to create Anysound objects?",
+                "Individual Anysounds", "Cancel", "Single Anysound (all clips)");
+
+            switch (option)
+            {
+                case 0: // Individual
+                    CreateIndividualAnysounds(selectedAudioClips);
+                    break;
+                case 1: // Cancel
+                    return;
+                case 2: // Single
+                    CreateSingleAnysound(selectedAudioClips);
+                    break;
+            }
+        }
+        else
+        {
+            CreateSingleAnysound(selectedAudioClips);
+        }
+    }
+
+    private static void CreateSingleAnysound(AudioClip[] audioClips)
+    {
+        var anysound = ScriptableObject.CreateInstance<Anysound>();
+        anysound.AudioClips = audioClips;
+
+        string path = AssetDatabase.GetAssetPath(audioClips[0]);
+        string directory = Path.GetDirectoryName(path);
+        string fileName = audioClips.Length == 1 ? audioClips[0].name : "New Anysound";
+        string assetPath = AssetDatabase.GenerateUniqueAssetPath($"{directory}/{fileName}.asset");
+
+        AssetDatabase.CreateAsset(anysound, assetPath);
+        AssetDatabase.SaveAssets();
+
+        EditorUtility.FocusProjectWindow();
+        Selection.activeObject = anysound;
+    }
+
+    private static void CreateIndividualAnysounds(AudioClip[] audioClips)
+    {
+        Object lastAnysound = null;
+        foreach (var clip in audioClips)
+        {
+            var anysound = ScriptableObject.CreateInstance<Anysound>();
+            anysound.AudioClips = new[] { clip };
+
+            string path = AssetDatabase.GetAssetPath(clip);
+            string directory = Path.GetDirectoryName(path);
+            string fileName = clip.name;
+            string assetPath = AssetDatabase.GenerateUniqueAssetPath($"{directory}/{fileName}.asset");
+
+            AssetDatabase.CreateAsset(anysound, assetPath);
+            lastAnysound = anysound;
+        }
+
+        AssetDatabase.SaveAssets();
+        EditorUtility.FocusProjectWindow();
+        if (lastAnysound != null)
+        {
+            Selection.activeObject = lastAnysound;
+        }
+    }
+
+    [MenuItem("Assets/Create/Anysound from selected clips", true)]
+    public static bool CreateAnysoundFromSelectedClipsValidate()
+    {
+        return Selection.objects.OfType<AudioClip>().Any();
+    }
+}

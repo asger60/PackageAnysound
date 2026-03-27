@@ -1,13 +1,12 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 [CreateAssetMenu(fileName = "Anysound", menuName = "Anysound/Anysound", order = 1)]
 public class Anysound : ScriptableObject
 {
     [SerializeField] private AudioClip[] audioClips;
+    public AudioClip[] AudioClips { get => audioClips; set => audioClips = value; }
 
     enum ClipSelectMode
     {
@@ -238,4 +237,8 @@ public class Anysound : ScriptableObject
 
     public static void Play(Anysound sound, GameObject parentObject) => AnysoundRuntime.Play(sound, parentObject);
     public static void Stop(Anysound sound, GameObject parentObject) => AnysoundRuntime.Stop(sound, parentObject);
+
+    public void Play(GameObject parentObject = null) => AnysoundRuntime.Play(this, parentObject);
+    public void Stop(GameObject parentObject = null) => AnysoundRuntime.Stop(this, parentObject);
+    public void SetParameter(GameObject parentObject, float value) => AnysoundRuntime.SetParameter(this, parentObject, value);
 }
